@@ -1,0 +1,12 @@
+#ZooKeeper
+**/data/version*/
+*log*
+!workspace/check-logs
+*.pid
+
+*.bin
+*.bak
+*~
+*.jar
+*.tgz
+
