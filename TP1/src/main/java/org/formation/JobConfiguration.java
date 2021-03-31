@@ -1,5 +1,9 @@
-package org.formation.dummy;
+package org.formation;
 
+import org.formation.dummy.DummyJobListener;
+import org.formation.dummy.DummyReader;
+import org.formation.dummy.DummyRecord;
+import org.formation.dummy.DummyWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -10,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DummyConfiguration {
+public class JobConfiguration {
 
 	@Autowired 
 	DummyReader dummyReader;
