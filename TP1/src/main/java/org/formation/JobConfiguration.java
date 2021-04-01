@@ -2,14 +2,14 @@ package org.formation;
 
 import javax.annotation.Resource;
 
-import org.formation.dummy.DummyJobListener;
-import org.formation.dummy.DummyRecord;
+import org.formation.file.ProductProcessor;
 import org.formation.model.InputProduct;
+import org.formation.model.OutputProduct;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +21,19 @@ public class JobConfiguration {
 
 	@Resource 
 	FlatFileItemReader<InputProduct> productReader;
+	@Resource
+	ItemProcessor<InputProduct,OutputProduct> productProcessors;
 	@Resource 
-	FlatFileItemWriter<InputProduct> productWriter;
+	FlatFileItemWriter<OutputProduct> productWriter;
+	@Autowired
+	ProductProcessor productProcessor;
 	
 	@Autowired
 	JobBuilderFactory jobBuilderFactory; 
 	
 	@Autowired
 	StepBuilderFactory stepBuilderFactory; 
+	
 	
 	@Bean
 	public Job flatFileJob() {
@@ -41,8 +46,10 @@ public class JobConfiguration {
 	@Bean
 	public Step firstStep() {
 		return this.stepBuilderFactory.get("FlatFileStep")
-	    .<InputProduct, InputProduct>chunk(10)
+	    .<InputProduct, OutputProduct>chunk(10)
 	    .reader(productReader)
+	    .processor(productProcessors)
+	    .listener(productProcessor)
 	    .writer(productWriter)
 	    .build();
 
