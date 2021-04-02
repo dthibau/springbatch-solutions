@@ -1,17 +1,22 @@
 package org.formation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
-import org.formation.file.ProductProcessor;
 import org.formation.model.InputProduct;
 import org.formation.model.OutputProduct;
+import org.formation.model.ProductProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.FlatFileItemWriter;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.support.CompositeItemProcessor;
+import org.springframework.batch.item.validator.BeanValidatingItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,11 +25,11 @@ import org.springframework.context.annotation.Configuration;
 public class JobConfiguration {
 
 	@Resource 
-	FlatFileItemReader<InputProduct> productReader;
+	ItemReader<InputProduct> jsonProductReader;
 	@Resource
 	ItemProcessor<InputProduct,OutputProduct> productProcessors;
 	@Resource 
-	FlatFileItemWriter<OutputProduct> productWriter;
+	ItemWriter<OutputProduct> productWriter;
 	@Autowired
 	ProductProcessor productProcessor;
 	
@@ -36,8 +41,8 @@ public class JobConfiguration {
 	
 	
 	@Bean
-	public Job flatFileJob() {
-		return this.jobBuilderFactory.get("FlatFileJob")
+	public Job job() {
+		return this.jobBuilderFactory.get("JsonXMLJob")
 		  .start(firstStep())
 		  .build();
 	}
@@ -45,9 +50,9 @@ public class JobConfiguration {
 	
 	@Bean
 	public Step firstStep() {
-		return this.stepBuilderFactory.get("FlatFileStep")
+		return this.stepBuilderFactory.get("JsonXmlStep")
 	    .<InputProduct, OutputProduct>chunk(10)
-	    .reader(productReader)
+	    .reader(jsonProductReader)
 	    .processor(productProcessors)
 	    .listener(productProcessor)
 	    .writer(productWriter)
@@ -55,5 +60,6 @@ public class JobConfiguration {
 
 	}
 	
+
 	
 }

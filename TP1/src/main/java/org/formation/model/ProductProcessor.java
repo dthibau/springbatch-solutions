@@ -1,7 +1,5 @@
-package org.formation.file;
+package org.formation.model;
 
-import org.formation.model.InputProduct;
-import org.formation.model.OutputProduct;
 import org.springframework.batch.core.annotation.AfterProcess;
 import org.springframework.batch.core.annotation.BeforeProcess;
 import org.springframework.batch.core.annotation.OnProcessError;

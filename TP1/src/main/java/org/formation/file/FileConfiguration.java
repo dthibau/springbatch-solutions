@@ -1,8 +1,5 @@
 package org.formation.file;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.formation.model.InputProduct;
 import org.formation.model.OutputProduct;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -13,9 +10,6 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.file.transform.FieldExtractor;
-import org.springframework.batch.item.support.CompositeItemProcessor;
-import org.springframework.batch.item.validator.BeanValidatingItemProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -24,8 +18,6 @@ import org.springframework.core.io.FileSystemResource;
 @Configuration
 public class FileConfiguration {
 	
-	@Autowired
-	ProductProcessor productProcessor;
 
 	@Bean
 	public FlatFileItemReader<InputProduct> productReader() {
@@ -74,25 +66,6 @@ public class FileConfiguration {
 	}
 
 
-	@Bean
-	CompositeItemProcessor<InputProduct, OutputProduct> productProcessors() throws Exception {
-		CompositeItemProcessor<InputProduct,OutputProduct> compositeProcessor =
-				new CompositeItemProcessor<InputProduct,OutputProduct>();
-				List itemProcessors = new ArrayList();
-				itemProcessors.add(productProcessor);
-				itemProcessors.add(productValidator());
-				compositeProcessor.setDelegates(itemProcessors);
-				
-		return compositeProcessor;
-	}
-	
-	@Bean
-	public BeanValidatingItemProcessor<InputProduct> productValidator() throws Exception {
-		BeanValidatingItemProcessor<InputProduct> validator = new BeanValidatingItemProcessor<>();
-		validator.setFilter(true);
-		validator.afterPropertiesSet();
 
-		return validator;
-	}
 
 }
