@@ -1,8 +1,5 @@
 package org.formation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.formation.model.InputProduct;
@@ -15,8 +12,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.CompositeItemProcessor;
-import org.springframework.batch.item.validator.BeanValidatingItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 public class JobConfiguration {
 
 	@Resource 
-	ItemReader<InputProduct> jsonProductReader;
+	ItemReader<InputProduct> jdbcProductReader;
 	@Resource
 	ItemProcessor<InputProduct,OutputProduct> productProcessors;
 	@Resource 
@@ -42,7 +37,7 @@ public class JobConfiguration {
 	
 	@Bean
 	public Job job() {
-		return this.jobBuilderFactory.get("JsonXMLJob")
+		return this.jobBuilderFactory.get("BDJob")
 		  .start(firstStep())
 		  .build();
 	}
@@ -50,9 +45,9 @@ public class JobConfiguration {
 	
 	@Bean
 	public Step firstStep() {
-		return this.stepBuilderFactory.get("JsonXmlStep")
+		return this.stepBuilderFactory.get("BDStep")
 	    .<InputProduct, OutputProduct>chunk(10)
-	    .reader(jsonProductReader)
+	    .reader(jdbcProductReader)
 	    .processor(productProcessors)
 	    .listener(productProcessor)
 	    .writer(productXmlWriter)
