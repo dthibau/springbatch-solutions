@@ -1,4 +1,7 @@
-
+spring:
+  batch:
+    job:
+      enabled: false 
 appli:
   input: jdbc:postgresql://localhost:5434/produits
 ---
