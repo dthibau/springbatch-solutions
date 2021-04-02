@@ -29,7 +29,7 @@ public class JobConfiguration {
 	@Resource
 	ItemProcessor<InputProduct,OutputProduct> productProcessors;
 	@Resource 
-	ItemWriter<OutputProduct> productWriter;
+	ItemWriter<OutputProduct> productXmlWriter;
 	@Autowired
 	ProductProcessor productProcessor;
 	
@@ -55,7 +55,7 @@ public class JobConfiguration {
 	    .reader(jsonProductReader)
 	    .processor(productProcessors)
 	    .listener(productProcessor)
-	    .writer(productWriter)
+	    .writer(productXmlWriter)
 	    .build();
 
 	}
