@@ -39,7 +39,7 @@ public class Tp1Application implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		Map<String, JobParameter> parametersMap = new HashMap<>();
-		parametersMap.put("DATE", new JobParameter(new Date()));
+		parametersMap.put("DATE", new JobParameter(new Date(),false));
 
 		JobExecution jobExecution = jobLauncher.run(job, new JobParameters(parametersMap));
 

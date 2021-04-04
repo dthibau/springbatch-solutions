@@ -18,8 +18,8 @@ public class ProcessorConfiguration {
 	CompositeItemProcessor<InputProduct, OutputProduct> productProcessors() throws Exception {
 		CompositeItemProcessor<InputProduct, OutputProduct> compositeProcessor = new CompositeItemProcessor<InputProduct, OutputProduct>();
 		List itemProcessors = new ArrayList();
-		itemProcessors.add(productProcessor);
 		itemProcessors.add(productValidator());
+		itemProcessors.add(productProcessor);
 		compositeProcessor.setDelegates(itemProcessors);
 
 		return compositeProcessor;
@@ -28,7 +28,7 @@ public class ProcessorConfiguration {
 	@Bean
 	public BeanValidatingItemProcessor<InputProduct> productValidator() throws Exception {
 		BeanValidatingItemProcessor<InputProduct> validator = new BeanValidatingItemProcessor<>();
-		validator.setFilter(true);
+		validator.setFilter(false);
 		validator.afterPropertiesSet();
 
 		return validator;

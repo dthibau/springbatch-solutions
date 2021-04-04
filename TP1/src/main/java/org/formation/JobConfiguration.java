@@ -12,6 +12,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.validator.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 public class JobConfiguration {
 
 	@Resource 
-	ItemReader<InputProduct> jdbcProductReader;
+	ItemReader<InputProduct> productReader;
 	@Resource
 	ItemProcessor<InputProduct,OutputProduct> productProcessors;
 	@Resource 
@@ -39,18 +40,51 @@ public class JobConfiguration {
 	public Job job() {
 		return this.jobBuilderFactory.get("BDJob")
 		  .start(firstStep())
+		  .next(secondStep())
+		  .next(thirdStep())
 		  .build();
 	}
 	
 	
 	@Bean
 	public Step firstStep() {
-		return this.stepBuilderFactory.get("BDStep")
+		return this.stepBuilderFactory.get("SkipStep")
 	    .<InputProduct, OutputProduct>chunk(10)
-	    .reader(jdbcProductReader)
+	    .reader(productReader)
 	    .processor(productProcessors)
 	    .listener(productProcessor)
 	    .writer(productXmlWriter)
+	    .faultTolerant()
+	    .skipLimit(200)
+	    .skip(ValidationException.class)
+	    .build();
+
+	}
+	@Bean
+	public Step secondStep() {
+		return this.stepBuilderFactory.get("SkipStepAllowStart")
+	    .<InputProduct, OutputProduct>chunk(10)
+	    .reader(productReader)
+	    .processor(productProcessors)
+	    .listener(productProcessor)
+	    .writer(productXmlWriter)
+	    .faultTolerant()
+	    .skipLimit(200)
+	    .skip(ValidationException.class)
+	    .allowStartIfComplete(true)
+	    .build();
+
+	}
+	
+	@Bean
+	public Step thirdStep() {
+		return this.stepBuilderFactory.get("thirdStep")
+	    .<InputProduct, OutputProduct>chunk(10)
+	    .reader(productReader)
+	    .processor(productProcessors)
+	    .listener(productProcessor)
+	    .writer(productXmlWriter)
+	    .startLimit(2)
 	    .build();
 
 	}
