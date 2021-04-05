@@ -3,11 +3,13 @@ package org.formation.model;
 import java.util.Map;
 
 import javax.validation.constraints.NotEmpty;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@XmlRootElement(name = "produit")
 public class InputProduct {
 
 	@NotEmpty

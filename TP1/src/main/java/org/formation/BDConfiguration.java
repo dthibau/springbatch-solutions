@@ -37,7 +37,7 @@ public class BDConfiguration {
         DriverManagerDataSource dataSource
           = new DriverManagerDataSource();
 
-        dataSource.setUrl(env.getProperty("appli.input"));
+        dataSource.setUrl(env.getProperty("appli.input.jdbc"));
         dataSource.setUsername(env.getProperty("spring.datasource.username"));
         dataSource.setPassword(env.getProperty("spring.datasource.password"));
 

@@ -18,18 +18,5 @@ public class ProductProcessor implements ItemProcessor<InputProduct, OutputProdu
     	}
 	}
 	
-	@BeforeProcess
-	public void beforeProcess(InputProduct item) {
-//        System.out.println("ItemProcessListener - beforeProcess");
-    }
- 
-    @AfterProcess
-    public void afterProcess(InputProduct item, OutputProduct result) {
-//        System.out.println("ItemProcessListener - afterProcess");
-    }
- 
-    @OnProcessError
-    public void onProcessError(InputProduct item, Exception e) {
-    	System.out.println("Erreur on "+item + " " + e.getMessage()); 	
-    }
+
 }

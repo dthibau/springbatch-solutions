@@ -20,10 +20,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JobConfiguration {
 
+	public static String CSV2CSV_STEP = "csv2csvStep";
+	public static String JSON2CSV_STEP = "json2csvStep";
+	public static String CSV2XML_STEP = "csv2xmlStep";
+	
+	@Autowired
+	AppliJobListener appliJobListener;
+	@Autowired
+	AppliStepListener appliStepListener;
+	
 	@Resource 
 	ItemReader<InputProduct> productReader;
+	@Resource 
+	ItemReader<InputProduct> jsonProductReader;
 	@Resource
 	ItemProcessor<InputProduct,OutputProduct> productProcessors;
+	@Resource 
+	ItemWriter<OutputProduct> productWriter;
 	@Resource 
 	ItemWriter<OutputProduct> productXmlWriter;
 	@Autowired
@@ -39,56 +52,53 @@ public class JobConfiguration {
 	@Bean
 	public Job job() {
 		return this.jobBuilderFactory.get("BDJob")
-		  .start(firstStep())
-		  .next(secondStep())
-		  .next(thirdStep())
+		  .start(csv2csv())
+		  .next(json2csv())
+		  .next(csv2xml())
+		  .listener(appliJobListener)
 		  .build();
 	}
 	
 	
 	@Bean
-	public Step firstStep() {
-		return this.stepBuilderFactory.get("SkipStep")
+	public Step csv2csv() {
+		return this.stepBuilderFactory.get(CSV2CSV_STEP)
 	    .<InputProduct, OutputProduct>chunk(10)
 	    .reader(productReader)
 	    .processor(productProcessors)
-	    .listener(productProcessor)
-	    .writer(productXmlWriter)
+	    .writer(productWriter)
 	    .faultTolerant()
 	    .skipLimit(200)
 	    .skip(ValidationException.class)
+	    .listener(appliStepListener)
 	    .build();
 
 	}
 	@Bean
-	public Step secondStep() {
-		return this.stepBuilderFactory.get("SkipStepAllowStart")
+	public Step json2csv() {
+		return this.stepBuilderFactory.get(JSON2CSV_STEP)
 	    .<InputProduct, OutputProduct>chunk(10)
-	    .reader(productReader)
+	    .reader(jsonProductReader)
 	    .processor(productProcessors)
-	    .listener(productProcessor)
-	    .writer(productXmlWriter)
+	    .writer(productWriter)
 	    .faultTolerant()
 	    .skipLimit(200)
 	    .skip(ValidationException.class)
-	    .allowStartIfComplete(true)
+	    .listener(appliStepListener)
 	    .build();
 
 	}
 	
 	@Bean
-	public Step thirdStep() {
-		return this.stepBuilderFactory.get("thirdStep")
+	public Step csv2xml() {
+		return this.stepBuilderFactory.get(CSV2XML_STEP)
 	    .<InputProduct, OutputProduct>chunk(10)
 	    .reader(productReader)
-	    .processor(productProcessors)
-	    .listener(productProcessor)
 	    .writer(productXmlWriter)
 	    .startLimit(2)
+	    .listener(appliStepListener)
 	    .build();
 
 	}
-	
-
 	
 }
