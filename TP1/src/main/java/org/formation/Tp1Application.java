@@ -11,6 +11,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,6 +27,9 @@ public class Tp1Application implements CommandLineRunner {
 	@Autowired
 	Job job;
 
+	@Value("${appli.job.id}")
+	long id;
+	
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(Tp1Application.class, args);
 
@@ -40,6 +44,7 @@ public class Tp1Application implements CommandLineRunner {
 
 		Map<String, JobParameter> parametersMap = new HashMap<>();
 		parametersMap.put("DATE", new JobParameter(new Date(),false));
+		parametersMap.put("ID", new JobParameter(id));
 
 		JobExecution jobExecution = jobLauncher.run(job, new JobParameters(parametersMap));
 

@@ -3,6 +3,8 @@ spring:
     job:
       enabled: false 
 appli:
+  job:
+    id: 1
   source:
     directory: /home/dthibau/Formations/SpringBatch/MyWork/job/source
   input: 

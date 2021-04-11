@@ -41,6 +41,8 @@ public class JobConfiguration {
 	@Autowired
 	AppliJobListener appliJobListener;
 	@Autowired
+	AppliDecider appliDecider;
+	@Autowired
 	AppliStepListener appliStepListener;
 
 	@Autowired
@@ -70,11 +72,11 @@ public class JobConfiguration {
 
 	@Bean
 	public Job job() {
-		return jobBuilderFactory.get("StepFlowJob").start(initStep())
+		return jobBuilderFactory.get("StepFlowJob").start(initStep()).next(appliDecider)
 				.on("*").to(parallelFlow()).next(csv2xml())
 //				.next(cleanupStep())
-				.from(initStep()).on(NOFILES).fail()
-				.from(initStep()).on(SKIP).stopAndRestart(cleanupStep()).end()
+				.from(appliDecider).on(NOFILES).fail()
+				.from(appliDecider).on(SKIP).stopAndRestart(cleanupStep()).end()
 				.listener(appliJobListener).build();
 
 	}
