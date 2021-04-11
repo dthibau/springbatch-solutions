@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
@@ -24,8 +26,8 @@ public class Tp1Application implements CommandLineRunner {
 	@Autowired
 	JobLauncher jobLauncher;
 
-	@Autowired
-	Job job;
+	@Resource
+	Job bdJob;
 
 	@Value("${appli.job.id}")
 	long id;
@@ -44,9 +46,9 @@ public class Tp1Application implements CommandLineRunner {
 
 		Map<String, JobParameter> parametersMap = new HashMap<>();
 		parametersMap.put("DATE", new JobParameter(new Date(),false));
-		parametersMap.put("ID", new JobParameter(id));
+//		parametersMap.put("ID", new JobParameter(id));
 
-		JobExecution jobExecution = jobLauncher.run(job, new JobParameters(parametersMap));
+		JobExecution jobExecution = jobLauncher.run(bdJob, new JobParameters(parametersMap));
 
 		System.out.println("Job done " + jobExecution);
 	}

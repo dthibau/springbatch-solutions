@@ -1,43 +1,73 @@
 package org.formation.bd;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.formation.bd.item.FournisseurPartitioner;
 import org.formation.model.InputProduct;
-import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.PagingQueryProvider;
-import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
-import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 @Configuration
 public class BDJobConfiguration {
+
+	@Autowired
+	JobBuilderFactory jobBuilderFactory;
+
+	@Autowired
+	StepBuilderFactory stepBuilderFactory;
+
+
+	@Autowired
+	FournisseurPartitioner fournisseurPartitioner;
+	
+	@Resource
+	ItemReader<InputProduct> jdbcProductReader;
+	@Resource
+	ItemWriter<InputProduct> jdbcProductWriter;
 
 	@Resource
 	DataSource inputProductDataSource;
 
 	@Bean
-	public JdbcPagingItemReader<InputProduct> jdbcProductReader() throws Exception {
-		Map<String, Object> parameterValues = new HashMap<>();
-		parameterValues.put("fournisseurId", 1);
-		return new JdbcPagingItemReaderBuilder<InputProduct>().name("productReader").dataSource(inputProductDataSource)
-				.queryProvider(queryProvider()).parameterValues(parameterValues)
-				.rowMapper(BeanPropertyRowMapper.newInstance(InputProduct.class)).pageSize(20).build();
+	public Job bdJob() throws Exception {
+
+		return jobBuilderFactory.get("BDProductJob").start(masterStep()).build();
+
 	}
 
 	@Bean
-	public PagingQueryProvider queryProvider() throws Exception {
-		SqlPagingQueryProviderFactoryBean provider = new SqlPagingQueryProviderFactoryBean();
-		provider.setDataSource(inputProductDataSource);
-		provider.setSelectClause("select id, hauteur,largeur,longueur,nom,reference");
-		provider.setFromClause("from produit");
-		provider.setWhereClause("where fournisseur_id=:fournisseurId");
-		provider.setSortKey("id");
-		return provider.getObject();
-	}
+    public Step masterStep() throws Exception 
+    {
+        return stepBuilderFactory.get("masterStep")
+                .partitioner(slaveStep().getName(), fournisseurPartitioner)
+                .step(slaveStep())
+                .gridSize(3)
+                .taskExecutor(new SimpleAsyncTaskExecutor())
+                .build();
+    }
+	
+	@Bean
+    public Step slaveStep() throws Exception 
+    {
+        return stepBuilderFactory.get("slaveStep")
+                .<InputProduct, InputProduct>chunk(100)
+                .reader(jdbcProductReader)
+                .writer(jdbcProductWriter)
+                .build();
+    }
+	
+
+	
+
+
+
 }

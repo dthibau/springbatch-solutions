@@ -1,4 +1,4 @@
-package org.formation.jsonxml;
+package org.formation.file.item;
 
 import org.formation.model.InputProduct;
 import org.formation.model.OutputProduct;

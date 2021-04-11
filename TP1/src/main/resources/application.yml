@@ -14,6 +14,7 @@ appli:
     directory: /home/dthibau/Formations/SpringBatch/MyWork/job/temp
   output:
     directory: /home/dthibau/Formations/SpringBatch/MyWork/job/output
+    jdbc: jdbc:postgresql://localhost:5434/output_produits
   
 ---
 spring:

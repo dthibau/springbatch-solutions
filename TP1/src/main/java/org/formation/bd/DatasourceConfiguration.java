@@ -1,4 +1,4 @@
-package org.formation;
+package org.formation.bd;
 
 import javax.sql.DataSource;
 
@@ -12,7 +12,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 @Profile("prod")
-public class BDConfiguration {
+public class DatasourceConfiguration {
 
     @Autowired
     private Environment env;
@@ -49,9 +49,8 @@ public class BDConfiguration {
  
         DriverManagerDataSource dataSource
           = new DriverManagerDataSource();
-//        dataSource.setDriverClassName(
-//          env.getProperty("jdbc.driverClassName"));
-        dataSource.setUrl(env.getProperty("appli.output.jdbc.url"));
+
+        dataSource.setUrl(env.getProperty("appli.output.jdbc"));
         dataSource.setUsername(env.getProperty("spring.datasource.username"));
         dataSource.setPassword(env.getProperty("spring.datasource.password"));
 

@@ -1,9 +1,7 @@
-package org.formation;
+package org.formation.file;
 
 import javax.annotation.Resource;
 
-import org.formation.file.CleanupTasklet;
-import org.formation.file.InitTasklet;
 import org.formation.model.InputProduct;
 import org.formation.model.OutputProduct;
 import org.formation.model.ProductProcessor;
