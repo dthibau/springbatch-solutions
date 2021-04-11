@@ -6,8 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.formation.JobConfiguration;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.UnexpectedJobExecutionException;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
@@ -40,14 +41,17 @@ public class InitTasklet implements Tasklet {
 		taskletContext.put("temp.directory", tempDirectory);
 		taskletContext.put("output.directory", outputDirectory);
 
-		
 		File sourceDir = new File(sourceDirectory);
 
 		File[] files = sourceDir.listFiles();
-		for (File file : files ) {
-			Path copied = Paths.get(inputDirectory + "/" + file.getName());
-			Files.copy(Paths.get(file.toURI()), copied, StandardCopyOption.REPLACE_EXISTING);
-		}	
+		if (files.length == 0) {
+			contribution.getStepExecution().setExitStatus(new ExitStatus(JobConfiguration.NOFILES));
+		} else {
+			for (File file : files) {
+				Path copied = Paths.get(inputDirectory + "/" + file.getName());
+				Files.copy(Paths.get(file.toURI()), copied, StandardCopyOption.REPLACE_EXISTING);
+			}
+		}
 
 		return RepeatStatus.FINISHED;
 	}
