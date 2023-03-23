@@ -38,12 +38,12 @@ public class Tp1Application implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		Map<String, JobParameter> parametersMap = new HashMap<>();
-		parametersMap.put("DATE", new JobParameter(new Date()));
-
-		JobExecution jobExecution = jobLauncher.run(job, new JobParameters(parametersMap));
-
-		System.out.println("Job done " + jobExecution);
+//		Map<String, JobParameter> parametersMap = new HashMap<>();
+//		parametersMap.put("DATE", new JobParameter(new Date()));
+//
+//		JobExecution jobExecution = jobLauncher.run(job, new JobParameters(parametersMap));
+//
+//		System.out.println("Job done " + jobExecution);
 	}
 
 }

@@ -30,6 +30,6 @@ public class ProductProcessor implements ItemProcessor<InputProduct, OutputProdu
  
     @OnProcessError
     public void onProcessError(InputProduct item, Exception e) {
-    	System.out.println("Erreur on "+item + " " + e.getMessage()); 	
+//    	System.out.println("Erreur on "+item + " " + e.getMessage()); 	
     }
 }

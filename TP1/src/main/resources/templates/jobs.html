@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:insert="fragments :: header"></div>
+
+<div th:insert="fragments :: navbar"></div>
+
+<div class="container py-5">
+	<div class="row">
+		<h3>Liste des jobs</h3>
+	</div>
+	<div class="row">
+		<table class="table">
+			<tr>
+				<th>Nom</th>
+
+
+				<th></th>
+			</tr>
+			<tr th:each="job : ${jobNames}">
+				<td th:text="${job}">Réf</td>
+				<td><a class="btn btn-success" href="details.html" th:href="@{/operator/start(jobName=${job})}">Start</a></td> 
+			</tr>
+		</table>
+	</div>
+</div>
