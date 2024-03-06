@@ -122,12 +122,9 @@
 			<optional>true</optional>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-oxm 
-<dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-oxm</artifactId>
-    <version>3.0.0.RELEASE</version>
-</dependency> -->
-		
+			<dependency> <groupId>org.springframework</groupId> <artifactId>spring-oxm</artifactId> 
+			<version>3.0.0.RELEASE</version> </dependency> -->
+
 	</dependencies>
 
 	<build>
@@ -139,6 +136,26 @@
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>jar-with-dependencies</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>org.formation.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>assembly-single</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

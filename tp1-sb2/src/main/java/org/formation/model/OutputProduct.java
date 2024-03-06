@@ -2,11 +2,6 @@ package org.formation.model;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-@XmlRootElement(name = "produit")
 public class OutputProduct {
 
 	public OutputProduct() {
@@ -72,7 +67,6 @@ public class OutputProduct {
 		this.longueur = longueur;
 	}
 
-	@XmlTransient
 	public Date getInstant() {
 		return instant;
 	}
@@ -81,7 +75,6 @@ public class OutputProduct {
 		this.instant = instant;
 	}	
 
-	@XmlElement(name = "importedDate")
 	public String getImportedDate() {
 		return instant.toString();
 	}
