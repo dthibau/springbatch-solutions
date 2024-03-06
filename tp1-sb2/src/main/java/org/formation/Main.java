@@ -24,12 +24,12 @@ public class Main {
 		
 		// Load context
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
-				"/batch/bd-job-context.xml");
+				"/batch/threeSteps-job-context.xml");
 
 		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
-		Job job = (Job) context.getBean("bdJob");
+		Job job = (Job) context.getBean("threeStepsJob");
 		Map<String, JobParameter> parametersMap = new HashMap<>();
-		parametersMap.put("DATE", new JobParameter(new Date()));
+		// parametersMap.put("DATE", new JobParameter(new Date()));
 
 		JobExecution jobExecution = jobLauncher.run(job, new JobParameters(parametersMap));
 
