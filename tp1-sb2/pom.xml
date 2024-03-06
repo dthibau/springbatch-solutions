@@ -10,7 +10,7 @@
 	<properties>
 		<!-- Override this with -Denvironment=XXXX to change database type -->
 		<environment>hsql</environment>
-		<spring.framework.version>3.0.7.RELEASE</spring.framework.version>
+		<spring.framework.version>2.5.6</spring.framework.version>
 		<spring-batch.version>2.1.9.RELEASE</spring-batch.version>
 		<junit.version>4.8.2</junit.version>
 		<aspectj.version>1.5.4</aspectj.version>
@@ -46,7 +46,6 @@
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.7</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
