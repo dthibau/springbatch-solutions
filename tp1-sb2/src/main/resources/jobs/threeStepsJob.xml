@@ -9,11 +9,11 @@
 
 	<job id="threeStepsJob"
 		xmlns="http://www.springframework.org/schema/batch">
-		<step id="firstStep" next="secondStep"
+		<step id="csv2csv" next="bd2csv"
 			xmlns="http://www.springframework.org/schema/batch">
 			<tasklet>
-				<chunk reader="productReader"
-					processor="compositeItemProcessor" writer="productWriter"
+				<chunk reader="flatFileReader"
+					processor="compositeItemProcessor" writer="flatFileWriter"
 					commit-interval="10" skip-limit="200">
 					<skippable-exception-classes>
 						<include
@@ -22,13 +22,16 @@
 				</chunk>
 
 			</tasklet>
+			<listeners>
+				<listener ref="appliStepListener"></listener>
+			</listeners>
 
 		</step>
-		<step id="secondStep" next="thirdStep"
+		<step id="bd2csv" next="csv2xml"
 			xmlns="http://www.springframework.org/schema/batch">
 			<tasklet allow-start-if-complete="true">
-				<chunk reader="productReader"
-					processor="compositeItemProcessor" writer="productWriter"
+				<chunk reader="jdbcReader"
+					processor="validatingProductProcessor" writer="flatFileWriter"
 					commit-interval="10" skip-limit="200">
 					<skippable-exception-classes>
 						<include
@@ -36,22 +39,33 @@
 					</skippable-exception-classes>
 				</chunk>
 			</tasklet>
+			<listeners>
+				<listener ref="appliStepListener"></listener>
+			</listeners>
 		</step>
-		<step id="thirdStep" next="thirdStep"
+		<step id="csv2xml"
 			xmlns="http://www.springframework.org/schema/batch">
 			<tasklet start-limit="2">
-				<chunk reader="productReader"
-					processor="compositeItemProcessor" writer="productWriter"
+				<chunk reader="flatFileReader"
+					processor="compositeItemProcessor" writer="xmlWriter"
 					commit-interval="10" />
 			</tasklet>
+			<listeners>
+				<listener ref="appliStepListener"></listener>
+			</listeners>
 		</step>
+		<listeners>
+			<listener ref="appliJobListener" />
+		</listeners>
 	</job>
 
 
-	<bean id="productReader"
+	<bean id="flatFileReader" scope="step" autowire-candidate="false"
 		class="org.springframework.batch.item.file.FlatFileItemReader">
-		<property name="resource" value="classpath:/products.csv" />
-		<property name="linesToSkip" value="1" />
+		<property name="resource"
+			value="#{stepExecutionContext['input.file.name']}" />
+		<property name="linesToSkip"
+			value="#{stepExecutionContext['linesToSkip']}" />
 		<property name="lineMapper">
 			<bean
 				class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
@@ -59,7 +73,7 @@
 					<bean
 						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
 						<property name="names"
-							value="id,availability,description,hauteur,largeur,longueur,nom,prixUnitaire,reference,fournisseurId" />
+							value="#{stepExecutionContext['tokenNames']}" />
 					</bean>
 				</property>
 				<property name="fieldSetMapper">
@@ -72,11 +86,41 @@
 			</bean>
 		</property>
 	</bean>
-
-	<bean id="productWriter"
+	<bean id="jdbcReader"
+		class="org.springframework.batch.item.database.JdbcPagingItemReader"
+		scope="step">
+		<property name="dataSource" ref="domainDataSource" />
+		<property name="rowMapper">
+			<bean
+				class="org.springframework.jdbc.core.BeanPropertyRowMapper">
+				<constructor-arg
+					value="org.formation.model.InputProduct" />
+			</bean>
+		</property>
+		<property name="queryProvider">
+			<bean
+				class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+				<property name="dataSource" ref="domainDataSource" />
+				<property name="sortKey" value="ID" />
+				<!-- Intentionally put sort key second in the query list as a test -->
+				<property name="selectClause"
+					value="select id, hauteur,largeur,longueur,nom,reference" />
+				<property name="fromClause" value="FROM produit" />
+				<property name="whereClause"
+					value="where fournisseur_id = :fournisseurId" />
+			</bean>
+		</property>
+		<property name="pageSize" value="20" />
+		<property name="parameterValues">
+			<map>
+				<entry key="fournisseurId" value="1" />
+			</map>
+		</property>
+	</bean>
+	<bean id="xmlWriter" scope="step" autowire-candidate="false"
 		class="org.springframework.batch.item.xml.StaxEventItemWriter">
 		<property name="resource"
-			value="file:/home/dthibau/Formations/SpringBatch/MyWork/products-out.xml" />
+			value="#{stepExecutionContext['output.file.name']}" />
 		<property name="marshaller" ref="outputProductMarshaller" />
 		<property name="rootTagName" value="products-fournisseur1" />
 		<property name="overwriteOutput" value="true" />
@@ -92,10 +136,11 @@
 			</util:map>
 		</property>
 	</bean>
-	<bean id="flatFileWriter"
+	<bean id="flatFileWriter" scope="step" autowire-candidate="false"
 		class="org.springframework.batch.item.file.FlatFileItemWriter">
 		<property name="resource"
-			value="file:/home/dthibau/Formations/SpringBatch/MyWork/products-out.csv" />
+			value="#{stepExecutionContext['output.file.name']}" />
+		<property name="appendAllowed" value="true" />
 
 		<property name="lineAggregator">
 			<bean
@@ -127,4 +172,22 @@
 			</list>
 		</property>
 	</bean>
+	<bean id="validatingProductProcessor"
+		class="org.springframework.batch.item.validator.ValidatingItemProcessor">
+		<property name="validator" ref="validator" />
+		<property name="filter" value="false" />
+	</bean>
+
+	<bean id="appliJobListener" class="org.formation.AppliJobListener">
+		<constructor-arg index="0"
+			value="${appli.input.directory}" />
+		<constructor-arg index="1"
+			value="${appli.temp.directory}" />
+		<constructor-arg index="2"
+			value="${appli.output.directory}" />
+	</bean>
+
+	<bean id="appliStepListener"
+		class="org.formation.AppliStepListener" />
+
 </beans>

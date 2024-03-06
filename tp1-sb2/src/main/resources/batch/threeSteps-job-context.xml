@@ -4,8 +4,16 @@
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+	<import resource="classpath:/domain-data-source-context.xml" />
+
+
 	<!-- useful for launching this job on its own from the command line -->
 	<import resource="classpath:/simple-job-launcher-context.xml" />
 	<import resource="classpath:/jobs/threeStepsJob.xml" />
 
+	<bean id="appConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location"
+			value="classpath:application.properties" />
+	</bean>
 </beans>

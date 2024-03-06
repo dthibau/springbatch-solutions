@@ -17,6 +17,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {
 
+	public static String CSV2CSV_STEP = "csv2csv";
+	public static String BD2CSV_STEP = "bd2csv";
+	public static String CSV2XML_STEP = "csv2xml";
+
 	public static void main(String[] args) throws JobExecutionAlreadyRunningException, JobRestartException,
 			JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 		
