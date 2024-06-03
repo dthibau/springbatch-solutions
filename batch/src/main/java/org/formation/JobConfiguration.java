@@ -9,6 +9,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.formation.model.OutputProduct;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +22,11 @@ public class JobConfiguration {
 	@Resource
 	ItemReader<InputProduct> productReader;
 	@Resource
-	ItemWriter<InputProduct> productWriter;
+	ItemWriter<OutputProduct> productWriter;
+
+
+	@Resource
+	ItemProcessor<InputProduct, OutputProduct> productProcessors;
 
 	@Autowired
 	JobRepository jobRepository;
@@ -29,7 +35,7 @@ public class JobConfiguration {
 	PlatformTransactionManager transactionManager;
 	
 
-	// A compléter
+
 	@Bean
 	Job fileJob() {
 		return new JobBuilder("fileJob", jobRepository)
@@ -42,8 +48,9 @@ public class JobConfiguration {
 	@Bean
 	public Step fileStep() {
 		return new StepBuilder("fileStep", jobRepository)
-				.<InputProduct,InputProduct>chunk(10, transactionManager)
+				.<InputProduct,OutputProduct>chunk(10, transactionManager)
 				.reader(productReader)
+				.processor(productProcessors)
 				.writer(productWriter)
 				.build();
 	}

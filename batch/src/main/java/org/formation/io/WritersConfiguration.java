@@ -1,6 +1,7 @@
 package org.formation.io;
 
 import org.formation.model.InputProduct;
+import org.formation.model.OutputProduct;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +16,8 @@ public class WritersConfiguration {
 	String outputFile;
 
     @Bean
-	public FlatFileItemWriter<InputProduct> productWriter() {
-        return new FlatFileItemWriterBuilder<InputProduct>()
+	public FlatFileItemWriter<OutputProduct> productWriter() {
+        return new FlatFileItemWriterBuilder<OutputProduct>()
                         .name("outputProductWriter")
                         .resource(new FileSystemResource(outputFile))
                         .delimited()
