@@ -1,0 +1,19 @@
+spring:
+  application:
+    name:TP1
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - prod
+
+  datasource:
+    password: postgres
+    url: jdbc:postgresql://localhost:5434/spring-batch
+    username: postgres
+  batch:
+    jdbc:
+      initialize-schema: always
