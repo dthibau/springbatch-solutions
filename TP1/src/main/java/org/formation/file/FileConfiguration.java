@@ -1,6 +1,7 @@
 package org.formation.file;
 
 import org.formation.model.InputProduct;
+import org.formation.model.OutputProduct;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
@@ -10,16 +11,24 @@ import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.file.transform.FieldExtractor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.batch.item.support.CompositeItemProcessor;
+import org.springframework.batch.item.validator.BeanValidatingItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class FileConfiguration {
 
 	@Value("${application.output-file}")
 	String outputFile;
+	@Autowired
+	ProductProcessor productProcessor;
 
 	@Bean
 	public FlatFileItemReader<InputProduct> productReader() {
@@ -49,8 +58,8 @@ public class FileConfiguration {
 	}
 	
 	@Bean
-	public FlatFileItemWriter<InputProduct> productWriter() {
-		return new FlatFileItemWriterBuilder<InputProduct>()
+	public FlatFileItemWriter<OutputProduct> productWriter() {
+		return new FlatFileItemWriterBuilder<OutputProduct>()
 			    .name("outputProductWriter")
 			    .resource(new FileSystemResource(outputFile))
 			    .delimited()
@@ -59,12 +68,33 @@ public class FileConfiguration {
 
 	}
 	@Bean
-	public FieldExtractor<InputProduct> outputExtractor() {
-		BeanWrapperFieldExtractor<InputProduct> ret = new BeanWrapperFieldExtractor<>();
+	public FieldExtractor<OutputProduct> outputExtractor() {
+		BeanWrapperFieldExtractor<OutputProduct> ret = new BeanWrapperFieldExtractor<>();
 	  
 	  ret.setNames(new String[] { "reference", "nom", "hauteur", "largeur", "longueur"});
 
 	  return ret;
+	}
+
+	@Bean
+	CompositeItemProcessor<InputProduct, OutputProduct> productProcessors() throws Exception {
+		CompositeItemProcessor<InputProduct,OutputProduct> compositeProcessor =
+				new CompositeItemProcessor<InputProduct,OutputProduct>();
+		List itemProcessors = new ArrayList();
+		itemProcessors.add(productProcessor);
+		itemProcessors.add(productValidator());
+		compositeProcessor.setDelegates(itemProcessors);
+
+		return compositeProcessor;
+	}
+
+	@Bean
+	public BeanValidatingItemProcessor<InputProduct> productValidator() throws Exception {
+		BeanValidatingItemProcessor<InputProduct> validator = new BeanValidatingItemProcessor<>();
+		validator.setFilter(true);
+	//	validator.afterPropertiesSet();
+
+		return validator;
 	}
 
 
