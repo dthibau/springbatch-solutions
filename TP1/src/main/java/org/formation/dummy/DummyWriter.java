@@ -13,6 +13,5 @@ public class DummyWriter implements ItemWriter<DummyRecord> {
 	@Override
 	public void write(Chunk<? extends DummyRecord> chunk) throws Exception {
 		System.out.println(chunk.getItems());
-
 	}
 }

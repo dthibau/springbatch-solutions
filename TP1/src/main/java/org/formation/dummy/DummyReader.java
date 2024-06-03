@@ -1,13 +1,18 @@
 package org.formation.dummy;
 
 import org.springframework.batch.core.configuration.annotation.JobScope;
+<<<<<<< HEAD
+=======
+import org.springframework.batch.core.configuration.annotation.StepScope;
+>>>>>>> 84ab397 (Atelier FlatFile)
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.stereotype.Component;
 
-@JobScope
+
+@StepScope
 @Component
 public class DummyReader implements ItemReader<DummyRecord> {
 
