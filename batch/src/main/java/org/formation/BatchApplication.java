@@ -17,6 +17,7 @@ public class BatchApplication {
 				.filter(n -> n.toLowerCase().contains("job") || n.toLowerCase().contains("step") || n.toLowerCase().contains("batch") )
 				.forEach(System.out::println);*/
 
+
 	}
 
 }

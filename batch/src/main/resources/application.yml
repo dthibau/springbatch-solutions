@@ -2,7 +2,8 @@ spring:
   application:
     name: batch
 
-
+application:
+  output-file: /home/dthibau/Formations/SpringBatch/MyWork/products-out.csv
 ---
 spring:
   config:
