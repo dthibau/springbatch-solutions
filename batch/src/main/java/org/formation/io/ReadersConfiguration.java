@@ -6,6 +6,9 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.json.JacksonJsonObjectReader;
+import org.springframework.batch.item.json.JsonItemReader;
+import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -48,4 +51,12 @@ public class ReadersConfiguration {
         return reader;*/
 
     }
+
+    @Bean
+    public JsonItemReader<InputProduct> jsonProductReader() {
+        return new JsonItemReaderBuilder<InputProduct>()
+                .jsonObjectReader(new JacksonJsonObjectReader<>(InputProduct.class))
+                .resource(new ClassPathResource("/products.json")).name("JsonProductReader").build();
+    }
+
 }

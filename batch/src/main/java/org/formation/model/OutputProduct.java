@@ -2,10 +2,14 @@ package org.formation.model;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.Instant;
 
+@XmlRootElement(name = "produit")
 public class OutputProduct {
 
 	public OutputProduct() {
@@ -22,6 +26,7 @@ public class OutputProduct {
 	}
 	@NotEmpty
 	@Length(min = 5, max = 5)
+
 	private String reference;
 	@NotEmpty
 	private String nom;
@@ -29,6 +34,8 @@ public class OutputProduct {
 	private Float hauteur, largeur, longueur;
 	@NotNull
 	private Instant instant;
+
+    @XmlAttribute(name="ref")
 	public String getReference() {
 		return reference;
 	}
@@ -65,5 +72,9 @@ public class OutputProduct {
 	public void setInstant(Instant instant) {
 		this.instant = instant;
 	}
-	
+
+    @XmlElement(name = "importedDate")
+	public String getImportedDate() {
+        		return instant.toString();
+    }
 }

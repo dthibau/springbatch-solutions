@@ -22,8 +22,12 @@ public class JobConfiguration {
 	@Resource
 	ItemReader<InputProduct> productReader;
 	@Resource
-	ItemWriter<OutputProduct> productWriter;
+	ItemReader<InputProduct> jsonProductReader;
 
+	@Resource
+	ItemWriter<OutputProduct> productWriter;
+	@Resource
+	ItemWriter<OutputProduct> xmlProductWriter;
 
 	@Resource
 	ItemProcessor<InputProduct, OutputProduct> productProcessors;
@@ -49,9 +53,9 @@ public class JobConfiguration {
 	public Step fileStep() {
 		return new StepBuilder("fileStep", jobRepository)
 				.<InputProduct,OutputProduct>chunk(10, transactionManager)
-				.reader(productReader)
+				.reader(jsonProductReader)
 				.processor(productProcessors)
-				.writer(productWriter)
+				.writer(xmlProductWriter)
 				.build();
 	}
 }
