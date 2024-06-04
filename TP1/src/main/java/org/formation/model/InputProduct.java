@@ -1,8 +1,11 @@
 package org.formation.model;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.Map;
 
 public class InputProduct {
 
@@ -11,9 +14,19 @@ public class InputProduct {
 	private String reference;
 	@NotEmpty
 	private String nom;
-	
-	
-	
+
+	@JsonProperty("dimension")
+	private void unpackDimension(Map<String, Object> dimension) {
+		this.hauteur = ((Double) dimension.get("hauteur")).floatValue();
+		this.largeur = ((Double) dimension.get("largeur")).floatValue();
+		this.longueur = ((Double) dimension.get("longueur")).floatValue();
+	}
+
+	@JsonProperty("fournisseur")
+	private void unpackFournisseur(Map<String, Object> fournisseur) {
+		this.fournisseurId = (Integer) fournisseur.get("id");
+	}
+
 	private Float hauteur, largeur, longueur;
 
 	private long id;

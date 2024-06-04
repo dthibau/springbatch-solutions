@@ -9,6 +9,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.formation.model.OutputProduct;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +22,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class JobConfiguration {
 
 	@Resource
-	FlatFileItemReader<InputProduct> productReader;
+	ItemWriter<OutputProduct> productWriter;
+
 	@Resource
-	FlatFileItemWriter<OutputProduct> productWriter;
+	ItemReader<InputProduct> jsonProductReader;
+	@Resource
+	ItemWriter<OutputProduct> xmlProductWriter;
+
 
 	@Resource
 	ItemProcessor<InputProduct, OutputProduct> productProcessors;
@@ -48,9 +54,9 @@ public class JobConfiguration {
 	public Step fileStep() {
 		return new StepBuilder("fileStep", jobRepository)
 				.<InputProduct,OutputProduct>chunk(10, transactionManager)
-				.reader(productReader)
+				.reader(jsonProductReader)
 				.processor(productProcessors)
-				.writer(productWriter)
+				.writer(xmlProductWriter)
 				.build();
 	}
 

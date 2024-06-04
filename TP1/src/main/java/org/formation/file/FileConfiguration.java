@@ -81,8 +81,8 @@ public class FileConfiguration {
 		CompositeItemProcessor<InputProduct,OutputProduct> compositeProcessor =
 				new CompositeItemProcessor<InputProduct,OutputProduct>();
 		List itemProcessors = new ArrayList();
-		itemProcessors.add(productProcessor);
 		itemProcessors.add(productValidator());
+		itemProcessors.add(productProcessor);
 		compositeProcessor.setDelegates(itemProcessors);
 
 		return compositeProcessor;
