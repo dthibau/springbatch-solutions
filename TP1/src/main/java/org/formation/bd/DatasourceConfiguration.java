@@ -1,6 +1,4 @@
-package org.formation;
-
-import javax.sql.DataSource;
+package org.formation.bd;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -8,10 +6,12 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import javax.sql.DataSource;
+
 @Configuration
 @Profile("prod")
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-public class BDConfiguration {
+public class DatasourceConfiguration {
 
     @Autowired
     private Environment env;
@@ -44,6 +44,17 @@ public class BDConfiguration {
         return dataSource;
     }
 
+    @Bean
+    public DataSource outputProductDataSource() {
  
+        DriverManagerDataSource dataSource
+          = new DriverManagerDataSource();
+
+        dataSource.setUrl(env.getProperty("application.output"));
+        dataSource.setUsername(env.getProperty("spring.datasource.username"));
+        dataSource.setPassword(env.getProperty("spring.datasource.password"));
+
+        return dataSource;
+    }
 
 }

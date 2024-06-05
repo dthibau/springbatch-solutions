@@ -24,7 +24,7 @@ public class BatchApplication  implements CommandLineRunner {
 	JobLauncher jobLauncher;
 
 	@Resource
-	Job fileJob;
+	Job bdJob;
 
 	@Value("${application.jour}")
 	String jour;
@@ -46,7 +46,7 @@ public class BatchApplication  implements CommandLineRunner {
 		Map<String, JobParameter<?>> parametersMap = new HashMap<>();
 		parametersMap.put("JOUR", new JobParameter(jour, String.class,true));
 
-		JobExecution jobExecution = jobLauncher.run(fileJob, new JobParameters(parametersMap));
+		JobExecution jobExecution = jobLauncher.run(bdJob, new JobParameters(parametersMap));
 
 
 		System.out.println(jobExecution);
