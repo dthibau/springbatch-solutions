@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 @Component
-@JobScope
+//@JobScope
 public class ProductStepListener {
 
     int nbSkipped = 0;
@@ -37,16 +37,16 @@ public class ProductStepListener {
             stepContext.put("tokenNames", new String[]{"id", "availability", "description", "hauteur", "largeur", "longueur", "nom", "prixUnitaire", "reference", "fournisseurId"});
             skipFile = jobContext.get("output.directory") + "/skip.csv";
             filePath = null;
-            stepContext.put("output.file.name", jobContext.get("temp.directory") + "/products-out.csv");
+            stepContext.put("output.file.name", jobContext.get("temp.directory") + "/products-csv-out.csv");
             stepContext.put("output.append",false);
         } else if (stepExecution.getStepName().equals(JobConfiguration.JSON2CSV_STEP)) {
             stepContext.put("input.file.name", jobContext.get("input.directory") + "/products.json");
             skipFile = jobContext.get("output.directory") + "/skip.json";
             filePath = null;
-            stepContext.put("output.file.name", jobContext.get("temp.directory") + "/products-out.csv");
+            stepContext.put("output.file.name", jobContext.get("temp.directory") + "/products-json-out.csv");
             stepContext.put("output.append",true);
         } else {
-            stepContext.put("input.file.name", jobContext.get("temp.directory") + "/products-out.csv");
+            stepContext.put("input.file.name", jobContext.get("temp.directory") + "/products-*.csv");
             stepContext.put("linesToSkip", 0);
             stepContext.put("tokenNames", new String[]{"reference", "nom", "hauteur", "largeur", "longueur"});
             stepContext.put("output.file.name", jobContext.get("output.directory") + "/products.xml");

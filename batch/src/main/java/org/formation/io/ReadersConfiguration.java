@@ -9,9 +9,8 @@ import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuild
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.file.MultiResourceItemReader;
+import org.springframework.batch.item.file.builder.MultiResourceItemReaderBuilder;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
@@ -23,7 +22,14 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -32,6 +38,29 @@ public class ReadersConfiguration {
 
     @Resource
     DataSource inputProductDataSource;
+
+    @Bean
+    @StepScope
+    public MultiResourceItemReader multiResourceReader(@Value("#{jobExecutionContext['temp.directory']}") String filePath) throws IOException {
+
+        List<FileSystemResource> resourcesList = new ArrayList<>();
+        Path dir = FileSystems.getDefault().getPath(filePath);
+        DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.csv");
+        for (Path path : stream) {
+            resourcesList.add(new FileSystemResource(path.toString()));
+        }
+        FileSystemResource[] resources = new FileSystemResource[resourcesList.size()];
+        for (int i = 0; i < resourcesList.size(); i++) {
+            resources[i] = resourcesList.get(i);
+        }
+
+
+        return new MultiResourceItemReaderBuilder<InputProduct>()
+                .name("FinalCSVsReader")
+                .delegate(productReader(null, null, -1))
+                .resources(resources)
+                .build();
+    }
 
     @Bean
     @StepScope

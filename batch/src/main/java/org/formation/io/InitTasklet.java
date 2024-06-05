@@ -1,5 +1,7 @@
 package org.formation.io;
 
+import org.formation.JobConfiguration;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.UnexpectedJobExecutionException;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -45,9 +47,13 @@ public class InitTasklet implements Tasklet {
         File sourceDir = new File(sourceDirectory);
 
         File[] files = sourceDir.listFiles();
-        for (File file : files ) {
-            Path copied = Paths.get(inputDirectory + "/" + file.getName());
-            Files.copy(Paths.get(file.toURI()), copied, StandardCopyOption.REPLACE_EXISTING);
+        if (files.length == 0) {
+            contribution.getStepExecution().setExitStatus(new ExitStatus(JobConfiguration.NOFILES));
+        } else {
+            for (File file : files) {
+                Path copied = Paths.get(inputDirectory + "/" + file.getName());
+                Files.copy(Paths.get(file.toURI()), copied, StandardCopyOption.REPLACE_EXISTING);
+            }
         }
 
         return RepeatStatus.FINISHED;
