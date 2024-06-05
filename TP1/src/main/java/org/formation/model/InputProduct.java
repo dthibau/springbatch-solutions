@@ -96,8 +96,19 @@ public class InputProduct {
 		this.fournisseurId = fournisseurId;
 	}
 
-	
-	
-	
-	
+	@Override
+	public String toString() {
+		return "InputProduct{" +
+				"reference='" + reference + '\'' +
+				", nom='" + nom + '\'' +
+				", hauteur=" + hauteur +
+				", largeur=" + largeur +
+				", longueur=" + longueur +
+				", id=" + id +
+				", availability=" + availability +
+				", description='" + description + '\'' +
+				", prixUnitaire=" + prixUnitaire +
+				", fournisseurId=" + fournisseurId +
+				'}';
+	}
 }
