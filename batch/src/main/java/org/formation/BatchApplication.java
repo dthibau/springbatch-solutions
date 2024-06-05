@@ -1,5 +1,6 @@
 package org.formation;
 
+import jakarta.annotation.Resource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
@@ -11,7 +12,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +21,9 @@ public class BatchApplication implements CommandLineRunner {
 	@Autowired
 	JobLauncher jobLauncher;
 
-	@Autowired
-	Job theJob;
+
+	@Resource
+	Job bdJob;
 
 	public static void main(String[] args) {
 
@@ -47,7 +48,8 @@ public class BatchApplication implements CommandLineRunner {
 		JobParameter jobParameter = new JobParameter(args[0], String.class,true);
 		parametersMap.put("id", jobParameter);
 
-		JobExecution jobExecution = jobLauncher.run(theJob, new JobParameters(parametersMap));
+
+		JobExecution jobExecution = jobLauncher.run(bdJob, new JobParameters(parametersMap));
 
 		System.out.println("Job " + jobExecution.getJobInstance().getJobName() + " finished with status: " + jobExecution.getStatus());
 

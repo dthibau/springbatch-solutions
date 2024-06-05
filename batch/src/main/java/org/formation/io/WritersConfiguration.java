@@ -1,8 +1,11 @@
 package org.formation.io;
 
+import jakarta.annotation.Resource;
 import org.formation.model.InputProduct;
 import org.formation.model.OutputProduct;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.batch.item.xml.StaxEventItemWriter;
@@ -14,8 +17,13 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import javax.sql.DataSource;
+
 @Configuration
 public class WritersConfiguration {
+
+    @Resource
+    DataSource outputProductDataSource;
 
     @Bean
     @StepScope
@@ -45,4 +53,17 @@ public class WritersConfiguration {
         return marshaller;
     }
 
+    @Bean
+    @StepScope
+    public JdbcBatchItemWriter<InputProduct> jdbcProductWriter() {
+        JdbcBatchItemWriter<InputProduct> itemWriter = new JdbcBatchItemWriter<>();
+        itemWriter.setDataSource(outputProductDataSource);
+        itemWriter.setSql("INSERT INTO NEW_PRODUIT (nom,reference) VALUES (:nom, :reference)");
+
+        itemWriter.setItemSqlParameterSourceProvider
+                (new BeanPropertyItemSqlParameterSourceProvider<>());
+        itemWriter.afterPropertiesSet();
+
+        return itemWriter;
+    }
 }

@@ -116,9 +116,9 @@ public class ReadersConfiguration {
 
     @Bean
     @StepScope
-    public JdbcPagingItemReader<InputProduct> jdbcProductReader() throws Exception {
+    public JdbcPagingItemReader<InputProduct> jdbcProductReader(@Value("#{stepExecutionContext['fournisseurId']}") Integer fournisseurId) throws Exception {
         Map<String, Object> parameterValues = new HashMap<>();
-        parameterValues.put("fournisseurId", 1);
+        parameterValues.put("fournisseurId", fournisseurId);
         return new JdbcPagingItemReaderBuilder<InputProduct>().name("productReader").dataSource(inputProductDataSource)
                 .queryProvider(queryProvider()).parameterValues(parameterValues)
                 .rowMapper(BeanPropertyRowMapper.newInstance(InputProduct.class)).pageSize(20).build();

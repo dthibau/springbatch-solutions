@@ -11,6 +11,8 @@ application:
   input-directory: /home/dthibau/Formations/SpringBatch/MyWork/job/input
   temp-directory: /home/dthibau/Formations/SpringBatch/MyWork/job/temp
   output-directory: /home/dthibau/Formations/SpringBatch/MyWork/job/output
+  output: jdbc:postgresql://localhost:5434/output-produits
+
 ---
 spring:
   config:
