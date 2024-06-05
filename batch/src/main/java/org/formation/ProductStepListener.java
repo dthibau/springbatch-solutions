@@ -1,17 +1,31 @@
 package org.formation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.annotation.OnSkipInProcess;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 @Component
 @JobScope
 public class ProductStepListener {
 
     int nbSkipped = 0;
+
+    String skipFile;
+    Path filePath = Paths.get("output.txt");
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @BeforeStep
     public void retrieveInterstepData(StepExecution stepExecution) {
@@ -21,12 +35,14 @@ public class ProductStepListener {
             stepContext.put("input.file.name", jobContext.get("input.directory") + "/products.csv");
             stepContext.put("linesToSkip", 1);
             stepContext.put("tokenNames", new String[]{"id", "availability", "description", "hauteur", "largeur", "longueur", "nom", "prixUnitaire", "reference", "fournisseurId"});
-            stepContext.put("skip.file.name", jobContext.get("temp.directory") + "/skip.csv");
+            skipFile = jobContext.get("output.directory") + "/skip.csv";
+            filePath = null;
             stepContext.put("output.file.name", jobContext.get("temp.directory") + "/products-out.csv");
             stepContext.put("output.append",false);
         } else if (stepExecution.getStepName().equals(JobConfiguration.JSON2CSV_STEP)) {
             stepContext.put("input.file.name", jobContext.get("input.directory") + "/products.json");
-            stepContext.put("skip.file.name", jobContext.get("temp.directory") + "/skip.json");
+            skipFile = jobContext.get("output.directory") + "/skip.json";
+            filePath = null;
             stepContext.put("output.file.name", jobContext.get("temp.directory") + "/products-out.csv");
             stepContext.put("output.append",true);
         } else {
@@ -42,9 +58,12 @@ public class ProductStepListener {
 
 
     @OnSkipInProcess
-    public void onSkipInProcess(Object item, Throwable t) {
+    public void onSkipInProcess(Object item, Throwable t) throws IOException {
         nbSkipped++;
-        System.out.println("onSkipInProcess " + item + ":" + t.toString());
-        System.out.println("NB SKIPPED " + nbSkipped);
+
+        if ( filePath == null ) {
+            filePath = Paths.get(skipFile);
+        }
+        Files.write(filePath, (objectMapper.writeValueAsString(item) + "\n").getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
     }
 }

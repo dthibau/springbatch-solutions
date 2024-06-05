@@ -1,6 +1,7 @@
 package org.formation.io;
 
 import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.UnexpectedJobExecutionException;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
@@ -33,6 +34,7 @@ public class InitTasklet implements Tasklet {
         _checkDir(inputDirectory);
         _checkDir(tempDirectory);
         _checkDir(outputDirectory);
+        _cleanDirectory(outputDirectory);
 
         ExecutionContext taskletContext = contribution.getStepExecution().getExecutionContext();
         taskletContext.put("input.directory", inputDirectory);
@@ -59,4 +61,18 @@ public class InitTasklet implements Tasklet {
         Assert.isTrue(dir.isDirectory(), dir + " exists and is not a directory");
 
     }
+
+    private void _cleanDirectory(String directory) {
+        File dir = new File(directory);
+
+        File[] files = dir.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            boolean deleted = files[i].delete();
+            if (!deleted) {
+                throw new UnexpectedJobExecutionException("Could not delete file " + files[i].getPath());
+            }
+        }
+
+    }
+
 }
