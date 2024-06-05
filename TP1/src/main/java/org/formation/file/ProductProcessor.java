@@ -13,7 +13,7 @@ public class ProductProcessor implements ItemProcessor<InputProduct, OutputProdu
 	
 	@Override
 	public OutputProduct process(InputProduct item) throws Exception {
-		if ( item.getFournisseurId() == 1 ) {
+		if ( item.getFournisseurId() == 1 || item.getFournisseurId() == 0) {
     		return new OutputProduct(item);
     	} else {
     		return null;

@@ -2,6 +2,7 @@ package org.formation.file;
 
 import org.formation.model.InputProduct;
 import org.formation.model.OutputProduct;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
@@ -18,21 +19,21 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 @Configuration
 public class JsonXmlConfiguration {
 
-	@Value("${application.output-xml}")
-	private String outputXml;
-   	@Bean
-	public JsonItemReader<InputProduct> jsonProductReader() {
-        		return new JsonItemReaderBuilder<InputProduct>()
-                				.jsonObjectReader(new JacksonJsonObjectReader<>(InputProduct.class))
-                				.resource(new ClassPathResource("/products.json")).name("JsonProductReader").build();
-       }
+	@Bean
+	@StepScope
+	public JsonItemReader<InputProduct> jsonProductReader(@Value("#{stepExecutionContext['input.file.name']}") String filePath) {
+		return new JsonItemReaderBuilder<InputProduct>()
+				.jsonObjectReader(new JacksonJsonObjectReader<>(InputProduct.class))
+				.resource(new FileSystemResource(filePath)).name("JsonProductReader").build();
+	}
 
 	@Bean
-	public StaxEventItemWriter<OutputProduct> xmlProductWriter() {
-				return new StaxEventItemWriterBuilder<OutputProduct>().name("productXmlWriter").marshaller(productMarshaller())
-								.resource(new FileSystemResource(outputXml))
-								.rootTagName("products-fournisseur1").overwriteOutput(true).build();
-			}
+	@StepScope
+	public StaxEventItemWriter<OutputProduct> productXmlWriter(@Value("#{stepExecutionContext['output.file.name']}") String filePath) {
+		return new StaxEventItemWriterBuilder<OutputProduct>().name("productXmlWriter").marshaller(productMarshaller())
+				.resource(new FileSystemResource(filePath))
+				.rootTagName("products-fournisseur1").overwriteOutput(true).build();
+	}
 
 	public Marshaller productMarshaller() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();

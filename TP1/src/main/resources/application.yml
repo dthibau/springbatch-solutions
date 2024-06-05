@@ -10,6 +10,10 @@ application:
   output-xml: /home/dthibau/Formations/SpringBatch/MyWork/products-out.xml
   input: jdbc:postgresql://localhost:5434/produits
   jour: 1
+  source-directory: /home/dthibau/Formations/SpringBatch/MyWork/job/source
+  input-directory: /home/dthibau/Formations/SpringBatch/MyWork/job/input
+  temp-directory: /home/dthibau/Formations/SpringBatch/MyWork/job/temp
+  output-directory: /home/dthibau/Formations/SpringBatch/MyWork/job/output
 ---
 spring:
   config:
