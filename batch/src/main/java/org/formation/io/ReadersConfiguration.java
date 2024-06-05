@@ -15,9 +15,11 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import javax.sql.DataSource;
@@ -33,7 +35,9 @@ public class ReadersConfiguration {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<InputProduct> productReader() {
+    public FlatFileItemReader<InputProduct> productReader(@Value("#{stepExecutionContext['input.file.name']}") String filePath,
+                                                          @Value("#{stepExecutionContext['tokenNames']}") String[] tokenNames,
+                                                          @Value("#{stepExecutionContext['linesToSkip']}") int linesToSkip) {
 
        return new FlatFileItemReaderBuilder<InputProduct>()
                 .name("flatFileproductReader")
@@ -45,15 +49,15 @@ public class ReadersConfiguration {
                 .build();
    /*
         FlatFileItemReader<InputProduct> reader = new FlatFileItemReader<InputProduct>();
-        reader.setResource(new ClassPathResource("/products.csv"));
-        reader.setLinesToSkip(1);
+        reader.setResource(new FileSystemResource(filePath));
+        reader.setLinesToSkip(linesToSkip);
         //Configure how each line will be parsed and mapped to different values
         reader.setLineMapper(new DefaultLineMapper<InputProduct>() {
             {
                 //3 columns in each row
                 setLineTokenizer(new DelimitedLineTokenizer() {
                     {
-                        setNames(new String[]{"id", "availability", "description", "hauteur", "largeur", "longueur", "nom", "prixUnitaire", "reference", "fournisseurId"});
+                        setNames(tokenNames);
                     }
                 });
                 //Set values in Employee class
@@ -70,10 +74,10 @@ public class ReadersConfiguration {
 
     @Bean
     @StepScope
-    public JsonItemReader<InputProduct> jsonProductReader() {
+    public JsonItemReader<InputProduct> jsonProductReader(@Value("#{stepExecutionContext['input.file.name']}") String filePath) {
         return new JsonItemReaderBuilder<InputProduct>()
                 .jsonObjectReader(new JacksonJsonObjectReader<>(InputProduct.class))
-                .resource(new ClassPathResource("/products.json")).name("JsonProductReader").build();
+                .resource(new FileSystemResource(filePath)).name("JsonProductReader").build();
     }
 
 

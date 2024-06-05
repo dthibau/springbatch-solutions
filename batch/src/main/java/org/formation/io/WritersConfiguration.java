@@ -17,18 +17,14 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 @Configuration
 public class WritersConfiguration {
 
-    @Value("${application.output-file}")
-	String outputFile;
-
-    @Value("${application.output-xml}")
-    private String outputXml;
-
     @Bean
     @StepScope
-    public FlatFileItemWriter<OutputProduct> flatFileproductWriter() {
+    public FlatFileItemWriter<OutputProduct> flatFileproductWriter(@Value("#{stepExecutionContext['output.file.name']}") String filePath,
+                                                                   @Value("#{stepExecutionContext['output.append']}") boolean shouldAppend) {
         return new FlatFileItemWriterBuilder<OutputProduct>()
                         .name("outputProductWriter")
-                        .resource(new FileSystemResource(outputFile))
+                        .resource(new FileSystemResource(filePath))
+                        .append(shouldAppend)
                         .delimited()
                         .names(new String[] { "reference", "nom", "hauteur", "largeur", "longueur"})
                         .headerCallback(writer -> writer.write("reference,nom,hauteur,largeur,longueur"))
@@ -37,9 +33,9 @@ public class WritersConfiguration {
 
     @Bean
     @StepScope
-    public StaxEventItemWriter<OutputProduct> xmlProductWriter() {
+    public StaxEventItemWriter<OutputProduct> xmlProductWriter(@Value("#{stepExecutionContext['output.file.name']}") String filePath) {
         return new StaxEventItemWriterBuilder<OutputProduct>().name("productXmlWriter").marshaller(productMarshaller())
-                .resource(new FileSystemResource(outputXml))
+                .resource(new FileSystemResource(filePath))
                 .rootTagName("products-fournisseur1").overwriteOutput(true).build();
     }
 
