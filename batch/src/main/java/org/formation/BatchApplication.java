@@ -13,9 +13,9 @@ public class BatchApplication {
 
 		ApplicationContext context = SpringApplication.run(BatchApplication.class, args);
 
-		Arrays.asList(context.getBeanDefinitionNames()).stream()
+/*		Arrays.asList(context.getBeanDefinitionNames()).stream()
 				.filter(n -> n.toLowerCase().contains("job") || n.toLowerCase().contains("step") || n.toLowerCase().contains("batch") )
-				.forEach(System.out::println);
+				.forEach(System.out::println);*/
 
 	}
 
