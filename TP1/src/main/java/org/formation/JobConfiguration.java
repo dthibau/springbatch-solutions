@@ -22,7 +22,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class JobConfiguration {
 
 	@Resource
-	ItemWriter<OutputProduct> productWriter;
+	ItemReader<InputProduct> jdbcProductReader;
+
+	@Resource
+	FlatFileItemWriter<OutputProduct> productWriter;
 
 	@Resource
 	ItemReader<InputProduct> jsonProductReader;
@@ -54,9 +57,9 @@ public class JobConfiguration {
 	public Step fileStep() {
 		return new StepBuilder("fileStep", jobRepository)
 				.<InputProduct,OutputProduct>chunk(10, transactionManager)
-				.reader(jsonProductReader)
+				.reader(jdbcProductReader)
 				.processor(productProcessors)
-				.writer(xmlProductWriter)
+				.writer(productWriter)
 				.build();
 	}
 

@@ -3,9 +3,9 @@ spring:
     name: batch
 
 application:
-  output-file: /home/dthibau/Formations/SpringBatch/MyWork/products-out.csv
+  output-file: /home/dthibau/Formations/SpringBatch/MyWork/bd-products-out.csv
   output-xml: /home/dthibau/Formations/SpringBatch/MyWork/products-out.xml
-
+  input: jdbc:postgresql://localhost:5434/produits
 ---
 spring:
   config:
