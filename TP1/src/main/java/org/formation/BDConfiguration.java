@@ -3,15 +3,14 @@ package org.formation;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 @Profile("prod")
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class BDConfiguration {
 
     @Autowired
@@ -19,6 +18,7 @@ public class BDConfiguration {
  
     @Primary
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public DataSource batchDataSource() {
  
         DriverManagerDataSource dataSource
@@ -32,10 +32,10 @@ public class BDConfiguration {
     }
     
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public DataSource inputProductDataSource() {
  
-        DriverManagerDataSource dataSource
-          = new DriverManagerDataSource();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
         dataSource.setUrl(env.getProperty("application.input"));
         dataSource.setUsername(env.getProperty("spring.datasource.username"));
