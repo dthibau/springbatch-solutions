@@ -13,9 +13,9 @@ import java.io.File;
 @Component
 public class CleanUpTasklet implements Tasklet {
 
-    @Value("${appli.input-directory}")
+    @Value("${application.input-directory}")
     private String inputDirectory;
-    @Value("${appli.temp-directory}")
+    @Value("${application.temp-directory}")
     private String tempDirectory;
 
     @Override

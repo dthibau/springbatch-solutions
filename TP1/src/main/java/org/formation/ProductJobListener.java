@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductJobListener {
 
-    @Value("${appli.input-directory}")
+    @Value("${application.input-directory}")
     private String inputDirectory;
-    @Value("${appli.temp-directory}")
+    @Value("${application.temp-directory}")
     private String tempDirectory;
-    @Value("${appli.output-directory}")
+    @Value("${application.output-directory}")
     private String outputDirectory;
 
 

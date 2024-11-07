@@ -18,13 +18,13 @@ import java.nio.file.StandardCopyOption;
 @Component
 public class InitTasklet implements Tasklet {
 
-    @Value("${appli.source-directory}")
+    @Value("${application.source-directory}")
     private String sourceDirectory;
-    @Value("${appli.input-directory}")
+    @Value("${application.input-directory}")
     private String inputDirectory;
-    @Value("${appli.temp-directory}")
+    @Value("${application.temp-directory}")
     private String tempDirectory;
-    @Value("${appli.output-directory}")
+    @Value("${application.output-directory}")
     private String outputDirectory;
 
     @Override
