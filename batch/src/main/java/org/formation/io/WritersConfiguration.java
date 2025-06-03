@@ -2,6 +2,7 @@ package org.formation.io;
 
 import org.formation.model.InputProduct;
 import org.formation.model.OutputProduct;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.batch.item.xml.StaxEventItemWriter;
@@ -23,6 +24,7 @@ public class WritersConfiguration {
     private String outputXml;
 
     @Bean
+    @StepScope
     public FlatFileItemWriter<OutputProduct> flatFileproductWriter() {
         return new FlatFileItemWriterBuilder<OutputProduct>()
                         .name("outputProductWriter")
@@ -34,6 +36,7 @@ public class WritersConfiguration {
     }
 
     @Bean
+    @StepScope
     public StaxEventItemWriter<OutputProduct> xmlProductWriter() {
         return new StaxEventItemWriterBuilder<OutputProduct>().name("productXmlWriter").marshaller(productMarshaller())
                 .resource(new FileSystemResource(outputXml))

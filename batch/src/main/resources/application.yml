@@ -1,6 +1,9 @@
 spring:
   application:
     name: batch
+  batch:
+    job:
+      enabled: false
 
 application:
   output-file: /home/dthibau/Formations/SpringBatch/MyWork/products-out.csv

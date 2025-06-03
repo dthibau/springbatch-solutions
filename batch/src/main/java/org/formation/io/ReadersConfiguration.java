@@ -2,6 +2,7 @@ package org.formation.io;
 
 import jakarta.annotation.Resource;
 import org.formation.model.InputProduct;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
@@ -31,6 +32,7 @@ public class ReadersConfiguration {
     DataSource inputProductDataSource;
 
     @Bean
+    @StepScope
     public FlatFileItemReader<InputProduct> productReader() {
 
        return new FlatFileItemReaderBuilder<InputProduct>()
@@ -67,6 +69,7 @@ public class ReadersConfiguration {
     }
 
     @Bean
+    @StepScope
     public JsonItemReader<InputProduct> jsonProductReader() {
         return new JsonItemReaderBuilder<InputProduct>()
                 .jsonObjectReader(new JacksonJsonObjectReader<>(InputProduct.class))
@@ -75,6 +78,7 @@ public class ReadersConfiguration {
 
 
     @Bean
+    @StepScope
     public JdbcPagingItemReader<InputProduct> jdbcProductReader() throws Exception {
         Map<String, Object> parameterValues = new HashMap<>();
         parameterValues.put("fournisseurId", 1);
@@ -84,6 +88,7 @@ public class ReadersConfiguration {
     }
 
     @Bean
+    @StepScope
     public PagingQueryProvider queryProvider() throws Exception {
         SqlPagingQueryProviderFactoryBean provider = new SqlPagingQueryProviderFactoryBean();
         provider.setDataSource(inputProductDataSource);
