@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div th:insert="fragments :: header"></div>
+
+<div th:insert="fragments :: navbar"></div>
+
+<div class="container py-5">
+	<div class="row">
+		<h3>Liste des jobs</h3>
+	</div>
+	<div class="row">
+		<table class="table">
+			<tr>
+				<th>Nom</th>
+				<th>Dernière instance</th>
+				<th>Dernière exécution</th>
+
+				<th></th>
+			</tr>
+			<tr th:each="job : ${jobs}">
+				<td th:text="${job.name}">Réf</td>
+				<td th:text="${job.lastJobInstance}">23.32</td>
+				<td th:text="${job.lastExecution}">23.32</td>
+			</tr>
+		</table>
+	</div>
+</div>
