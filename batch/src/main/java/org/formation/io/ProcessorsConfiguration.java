@@ -50,7 +50,7 @@ public class ProcessorsConfiguration {
     @Bean
     public BeanValidatingItemProcessor<InputProduct> productValidator() throws Exception {
         BeanValidatingItemProcessor<InputProduct> validator = new BeanValidatingItemProcessor<>();
-        validator.setFilter(true);
+        // validator.setFilter(true);
         return validator;
     }
 }
