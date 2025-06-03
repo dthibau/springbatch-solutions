@@ -5,6 +5,7 @@ spring:
 application:
   output-file: /home/dthibau/Formations/SpringBatch/MyWork/products-out.csv
   output-xml: /home/dthibau/Formations/SpringBatch/MyWork/products-out.xml
+  input-bd: jdbc:postgresql://localhost:5434/produit
 
 ---
 spring:

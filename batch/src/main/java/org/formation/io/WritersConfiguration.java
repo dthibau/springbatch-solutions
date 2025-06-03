@@ -23,7 +23,7 @@ public class WritersConfiguration {
     private String outputXml;
 
     @Bean
-	public FlatFileItemWriter<OutputProduct> productWriter() {
+    public FlatFileItemWriter<OutputProduct> flatFileproductWriter() {
         return new FlatFileItemWriterBuilder<OutputProduct>()
                         .name("outputProductWriter")
                         .resource(new FileSystemResource(outputFile))

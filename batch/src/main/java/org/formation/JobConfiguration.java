@@ -23,9 +23,11 @@ public class JobConfiguration {
 	ItemReader<InputProduct> productReader;
 	@Resource
 	ItemReader<InputProduct> jsonProductReader;
+	@Resource
+	ItemReader<InputProduct> jdbcProductReader;
 
 	@Resource
-	ItemWriter<OutputProduct> productWriter;
+	ItemWriter<OutputProduct> flatFileproductWriter;
 	@Resource
 	ItemWriter<OutputProduct> xmlProductWriter;
 
@@ -42,20 +44,19 @@ public class JobConfiguration {
 
 	@Bean
 	Job fileJob() {
-		return new JobBuilder("fileJob", jobRepository)
-				.start(fileStep())
-				.listener(new JobListener())
-				.build();
-
+			return new JobBuilder("bdToFlatJob", jobRepository)
+					.start(bdToFlatStep())
+					.listener(new JobListener())
+					.build();
 	}
 
 	@Bean
-	public Step fileStep() {
-		return new StepBuilder("fileStep", jobRepository)
+	public Step bdToFlatStep() {
+		return new StepBuilder("bdToFlatStep", jobRepository)
 				.<InputProduct,OutputProduct>chunk(10, transactionManager)
-				.reader(jsonProductReader)
+				.reader(jdbcProductReader)
 				.processor(productProcessors)
-				.writer(xmlProductWriter)
+				.writer(flatFileproductWriter)
 				.build();
 	}
 }

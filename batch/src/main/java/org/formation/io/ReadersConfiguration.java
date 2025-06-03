@@ -1,6 +1,11 @@
 package org.formation.io;
 
+import jakarta.annotation.Resource;
 import org.formation.model.InputProduct;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
+import org.springframework.batch.item.database.PagingQueryProvider;
+import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
+import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -12,9 +17,18 @@ import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class ReadersConfiguration {
+
+
+    @Resource
+    DataSource inputProductDataSource;
 
     @Bean
     public FlatFileItemReader<InputProduct> productReader() {
@@ -37,7 +51,7 @@ public class ReadersConfiguration {
                 //3 columns in each row
                 setLineTokenizer(new DelimitedLineTokenizer() {
                     {
-                        setNames(new String[] { "id", "availability", "description", "hauteur", "largeur", "longueur", "nom", "prixUnitaire","reference","fournisseurId" });
+                        setNames(new String[]{"id", "availability", "description", "hauteur", "largeur", "longueur", "nom", "prixUnitaire", "reference", "fournisseurId"});
                     }
                 });
                 //Set values in Employee class
@@ -59,4 +73,24 @@ public class ReadersConfiguration {
                 .resource(new ClassPathResource("/products.json")).name("JsonProductReader").build();
     }
 
+
+    @Bean
+    public JdbcPagingItemReader<InputProduct> jdbcProductReader() throws Exception {
+        Map<String, Object> parameterValues = new HashMap<>();
+        parameterValues.put("fournisseurId", 1);
+        return new JdbcPagingItemReaderBuilder<InputProduct>().name("productReader").dataSource(inputProductDataSource)
+                .queryProvider(queryProvider()).parameterValues(parameterValues)
+                .rowMapper(BeanPropertyRowMapper.newInstance(InputProduct.class)).pageSize(20).build();
+    }
+
+    @Bean
+    public PagingQueryProvider queryProvider() throws Exception {
+        SqlPagingQueryProviderFactoryBean provider = new SqlPagingQueryProviderFactoryBean();
+        provider.setDataSource(inputProductDataSource);
+        provider.setSelectClause("select *");
+        provider.setFromClause("from produit");
+        provider.setWhereClause("where fournisseur_id=:fournisseurId");
+        provider.setSortKey("id");
+        return provider.getObject();
+    }
 }
