@@ -1,6 +1,6 @@
 spring:
   application:
-    name:TP1
+    name: batch
 
 
 ---

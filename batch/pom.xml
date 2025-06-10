@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
+		<version>3.5.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.formation</groupId>
-	<artifactId>TP1</artifactId>
+	<artifactId>batch</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>TP1</name>
-	<description>TP1</description>
+	<name>Batch</name>
+	<description>Application fil rouge</description>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
