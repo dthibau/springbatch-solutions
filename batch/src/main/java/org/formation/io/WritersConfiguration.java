@@ -21,6 +21,7 @@ public class WritersConfiguration {
                         .resource(new FileSystemResource(outputFile))
                         .delimited()
                         .names(new String[] { "reference", "nom", "hauteur", "largeur", "longueur"})
+                        .headerCallback(writer -> writer.write("reference,nom,hauteur,largeur,longueur"))
                         .build();
     }
 }

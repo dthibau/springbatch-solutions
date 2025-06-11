@@ -2,6 +2,7 @@ package org.formation.io;
 
 import org.formation.model.InputProduct;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -15,6 +16,15 @@ public class ReadersConfiguration {
     @Bean
     public FlatFileItemReader<InputProduct> productReader() {
 
+       return new FlatFileItemReaderBuilder<InputProduct>()
+                .name("flatFileproductReader")
+                .resource(new ClassPathResource("/products.csv"))
+                .linesToSkip(1)
+                .delimited()
+                .names("id", "availability", "description", "hauteur", "largeur", "longueur", "nom", "prixUnitaire", "reference", "fournisseurId")
+                .targetType(InputProduct.class)
+                .build();
+   /*
         FlatFileItemReader<InputProduct> reader = new FlatFileItemReader<InputProduct>();
         reader.setResource(new ClassPathResource("/products.csv"));
         reader.setLinesToSkip(1);
@@ -35,7 +45,7 @@ public class ReadersConfiguration {
                 });
             }
         });
-        return reader;
+        return reader;*/
 
     }
 }
