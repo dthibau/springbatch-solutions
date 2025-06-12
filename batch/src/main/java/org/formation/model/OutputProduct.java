@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.Instant;
@@ -66,6 +67,7 @@ public class OutputProduct {
 	public void setLongueur(Float longueur) {
 		this.longueur = longueur;
 	}
+	@XmlTransient
 	public Instant getInstant() {
 		return instant;
 	}
