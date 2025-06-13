@@ -44,7 +44,7 @@ public class ReadersConfiguration {
 
     @Bean
     @StepScope
-    public MultiResourceItemReader multiResourceReader(@Value("#{jobExecutionContext['temp.directory']}") String inputDirectory) throws IOException {
+    public MultiResourceItemReader multiResourceReader(@Value("#{stepExecutionContext['temp.directory']}") String inputDirectory) throws IOException {
 
         Resource[] resources = new PathMatchingResourcePatternResolver()
                                 .getResources("file://" + inputDirectory + "/products-*.csv");
