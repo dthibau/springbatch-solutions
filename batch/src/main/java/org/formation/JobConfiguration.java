@@ -86,7 +86,7 @@ public class JobConfiguration {
 
 
 
-    /* Version sans decider
+    /* Version sans decider */
     @Bean
     Job fileJob() {
         return new JobBuilder("fileJob", jobRepository)
@@ -97,9 +97,9 @@ public class JobConfiguration {
                 .listener(productJobListener)
                 .build();
 
-    }*/
+    }
 
-    /* Version avec decider */
+    /* Version avec decider
     @Bean
     Job fileJob() {
         return new JobBuilder("fileJob", jobRepository)
@@ -111,7 +111,7 @@ public class JobConfiguration {
                 .listener(productJobListener)
                 .build();
 
-    }
+    } */
 
     @Bean
     public Step initStep() {

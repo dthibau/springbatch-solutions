@@ -44,7 +44,7 @@ public class ProductStepListener {
             skipFile = jobContext.get("output.directory") + "/skip.json";
             filePath = null;
             stepContext.put("output.file.name", jobContext.get("temp.directory") + "/products-json-out.csv");
-            stepContext.put("output.append",true);
+            stepContext.put("output.append",false);
         } else {
             stepContext.put("input.file.name", jobContext.get("temp.directory") + "/products-*.csv");
             stepContext.put("linesToSkip", 0);

@@ -1,6 +1,6 @@
 package org.formation.io;
 
-import jakarta.annotation.Resource;
+
 import org.formation.model.InputProduct;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
@@ -10,6 +10,7 @@ import org.springframework.batch.item.database.support.SqlPagingQueryProviderFac
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.MultiResourceItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.builder.MultiResourceItemReaderBuilder;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
 import org.springframework.batch.item.json.JsonItemReader;
@@ -19,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import javax.sql.DataSource;
@@ -36,28 +39,29 @@ import java.util.Map;
 public class ReadersConfiguration {
 
 
-    @Resource
+    @jakarta.annotation.Resource
     DataSource inputProductDataSource;
 
     @Bean
     @StepScope
-    public MultiResourceItemReader multiResourceReader(@Value("#{jobExecutionContext['temp.directory']}") String filePath) throws IOException {
+    public MultiResourceItemReader multiResourceReader(@Value("#{jobExecutionContext['temp.directory']}") String inputDirectory) throws IOException {
 
-        List<FileSystemResource> resourcesList = new ArrayList<>();
-        Path dir = FileSystems.getDefault().getPath(filePath);
-        DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.csv");
-        for (Path path : stream) {
-            resourcesList.add(new FileSystemResource(path.toString()));
-        }
-        FileSystemResource[] resources = new FileSystemResource[resourcesList.size()];
-        for (int i = 0; i < resourcesList.size(); i++) {
-            resources[i] = resourcesList.get(i);
-        }
+        Resource[] resources = new PathMatchingResourcePatternResolver()
+                                .getResources("file://" + inputDirectory + "/products-*.csv");
 
+        FlatFileItemReader<InputProduct> delegate =
+                                new FlatFileItemReaderBuilder<InputProduct>()
+                                        .name("delegateProductReader")
+                                        .resource(new FileSystemResource( "/products.csv"))
+                                        .linesToSkip(1)
+                                        .delimited()
+                                        .names("reference", "nom", "hauteur", "largeur", "longueur")
+                                        .targetType(InputProduct.class)
+                                        .build();
 
         return new MultiResourceItemReaderBuilder<InputProduct>()
                 .name("FinalCSVsReader")
-                .delegate(productReader(null, null, -1))
+                .delegate(delegate)
                 .resources(resources)
                 .build();
     }
