@@ -27,7 +27,7 @@ public class ProcessorsConfiguration {
     public ItemProcessor<InputProduct, OutputProduct> mapProcessor() {
         return item -> {
             // Example processing logic: convert to uppercase
-            if (item.getFournisseurId() == 1) {
+            if (item.getFournisseurId() == 1 || item.getFournisseurId() == 0) {
                 return new OutputProduct(item);
             } else {
                 return null;
